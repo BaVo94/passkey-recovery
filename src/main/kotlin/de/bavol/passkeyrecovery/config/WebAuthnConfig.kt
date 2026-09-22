@@ -1,4 +1,4 @@
-package org.example.passkeyrecovery.config
+package de.bavol.passkeyrecovery.config
 
 import com.webauthn4j.WebAuthnManager
 import org.springframework.context.annotation.Bean
@@ -11,5 +11,5 @@ class WebAuthnConfig {
     fun webAuthnManager(): WebAuthnManager {
         return WebAuthnManager.createNonStrictWebAuthnManager()
     }
-    
+
 }

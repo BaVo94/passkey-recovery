@@ -1,4 +1,4 @@
-package org.example.passkeyrecovery
+package de.bavol.passkeyrecovery
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

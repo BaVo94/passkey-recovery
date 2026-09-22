@@ -6,7 +6,7 @@ plugins {
     kotlin("plugin.jpa") version "2.3.21"
 }
 
-group = "org.example"
+group = "de.bavol"
 version = "0.0.1-SNAPSHOT"
 description = "passkey-recovery"
 

@@ -1,4 +1,4 @@
-package org.example.passkeyrecovery.model
+package de.bavol.passkeyrecovery.model
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
