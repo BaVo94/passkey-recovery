@@ -25,6 +25,7 @@ import com.webauthn4j.data.client.Origin
 import com.webauthn4j.data.client.challenge.Challenge
 import com.webauthn4j.data.client.challenge.DefaultChallenge
 import com.webauthn4j.server.ServerProperty
+import de.bavol.passkeyrecovery.exception.CredentialNotFoundException
 import de.bavol.passkeyrecovery.exception.LastCredentialException
 import de.bavol.passkeyrecovery.model.PasskeyCredential
 import de.bavol.passkeyrecovery.model.User
@@ -33,7 +34,6 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.time.Instant
 import java.util.UUID
-import javax.security.auth.login.CredentialNotFoundException
 
 @Service
 class PasskeyService(

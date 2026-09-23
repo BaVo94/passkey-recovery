@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Konto')}"></head>
+<body>
+
+<div th:replace="~{fragments/nav :: nav}"></div>
+<div th:replace="~{fragments/reminder :: reminder}"></div>
+
+<h1>Konto</h1>
+<p>Angemeldet als <span th:text="${user.displayName}">Name</span>.</p>
+
+<h2>Konto löschen</h2>
+<p>
+    Dieser Vorgang kann nicht rückgängig gemacht werden. Alle registrierten Passkeys
+    werden dabei entfernt.
+</p>
+<p>
+    Geben Sie zur Bestätigung Ihren Nutzernamen
+    <strong th:text="${user.username}">nutzername</strong> ein.
+</p>
+
+<input type="text" id="confirmUsername" autocomplete="off">
+<button id="deleteAccountButton" disabled>Konto endgültig löschen</button>
+
+<p id="status"></p>
+
+<script th:inline="javascript">
+    const expectedUsername = /*[[${user.username}]]*/ '';
+</script>
+<script src="/js/webauthn-common.js"></script>
+<script src="/js/webauthn-delete.js"></script>
+</body>
+</html>

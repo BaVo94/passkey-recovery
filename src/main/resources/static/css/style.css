@@ -11,3 +11,10 @@ th, td {
 th {
     background-color: #f0f0f0;
 }
+
+.reminder {
+    border: 1px solid #c8a000;
+    background-color: #fff8e0;
+    padding: 0.6rem 1rem;
+    margin-bottom: 1rem;
+}

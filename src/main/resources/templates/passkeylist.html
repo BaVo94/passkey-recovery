@@ -3,6 +3,7 @@
 <head th:replace="~{fragments/head :: head('Meine Passkeys')}"></head>
 <body>
 <div th:replace="~{fragments/nav :: nav}"></div>
+<div th:replace="~{fragments/reminder :: reminder}"></div>
 <h1>Liste ihrer Passkeys:</h1>
 <table>
     <thead>
@@ -35,9 +36,6 @@
 
 <button id="addPasskeyButton">Weiteren Passkey hinzufügen</button>
 <p id="status"></p>
-<p th:if="${credentials.size() == 1}">
-    Sie haben nur einen Passkey. Richten Sie einen zweiten ein, um den Zugang bei Geräteverlust nicht zu verlieren.
-</p>
 
 <script src="/js/webauthn-common.js"></script>
 <script src="/js/webauthn-add.js"></script>
