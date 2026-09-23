@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Anmeldung</title>
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+</head>
+<body>
+<h1>Anmelden</h1>
+
+<button id="loginButton">Mit Passkey anmelden</button>
+
+<p id="status"></p>
+
+<script src="/js/webauthn-common.js"></script>
+<script src="/js/webauthn-login.js"></script>
+</body>
+</html>

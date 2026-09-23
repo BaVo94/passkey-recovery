@@ -2,11 +2,14 @@ package de.bavol.passkeyrecovery.service
 
 import com.webauthn4j.WebAuthnManager
 import com.webauthn4j.converter.util.ObjectConverter
+import com.webauthn4j.credential.CredentialRecordImpl
 import com.webauthn4j.data.AttestationConveyancePreference
+import com.webauthn4j.data.AuthenticationParameters
 import com.webauthn4j.data.AuthenticatorSelectionCriteria
 import com.webauthn4j.data.PublicKeyCredentialCreationOptions
 import com.webauthn4j.data.PublicKeyCredentialDescriptor
 import com.webauthn4j.data.PublicKeyCredentialParameters
+import com.webauthn4j.data.PublicKeyCredentialRequestOptions
 import com.webauthn4j.data.PublicKeyCredentialRpEntity
 import com.webauthn4j.data.PublicKeyCredentialType
 import com.webauthn4j.data.PublicKeyCredentialUserEntity
@@ -14,6 +17,9 @@ import com.webauthn4j.data.RegistrationData
 import com.webauthn4j.data.RegistrationParameters
 import com.webauthn4j.data.ResidentKeyRequirement
 import com.webauthn4j.data.UserVerificationRequirement
+import com.webauthn4j.data.attestation.authenticator.AAGUID
+import com.webauthn4j.data.attestation.authenticator.AttestedCredentialData
+import com.webauthn4j.data.attestation.authenticator.COSEKey
 import com.webauthn4j.data.attestation.statement.COSEAlgorithmIdentifier
 import com.webauthn4j.data.client.Origin
 import com.webauthn4j.data.client.challenge.Challenge
@@ -25,6 +31,7 @@ import de.bavol.passkeyrecovery.repository.PasskeyCredentialRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.time.Instant
+import javax.security.auth.login.CredentialNotFoundException
 
 @Service
 class PasskeyService(
@@ -95,7 +102,7 @@ class PasskeyService(
             publicKeyCredentialParams,
             true
         )
-        
+
         return webAuthnManager.verifyRegistrationResponseJSON(responseJson, registrationParameters)
     }
 
@@ -122,4 +129,88 @@ class PasskeyService(
 
         return credentialRepository.save(credential)
     }
+
+    fun startAuthentication(user: User?): PublicKeyCredentialRequestOptions {
+        val challenge = DefaultChallenge()
+
+        val allowedCredentials = user?.let {
+            credentialRepository.findAllByUser(it)
+                .map { cred ->
+                    PublicKeyCredentialDescriptor(
+                        PublicKeyCredentialType.PUBLIC_KEY,
+                        cred.credentialId,
+                        null
+                    )
+                }
+        }
+
+        return PublicKeyCredentialRequestOptions(
+            challenge,
+            120000L,
+            rpId,
+            allowedCredentials,
+            UserVerificationRequirement.REQUIRED,
+            null
+        )
+    }
+
+    fun finishAuthentication(responseJson: String, challenge: Challenge): User {
+        val authenticationData = webAuthnManager.parseAuthenticationResponseJSON(responseJson)
+
+        val credentialId = authenticationData.credentialId
+            ?: throw IllegalStateException("Authentifizierungsantwort enthält keine Credential-ID")
+
+        val savedCredential = credentialRepository.findByCredentialId(credentialId)
+            ?: throw CredentialNotFoundException()
+
+        val userHandle = authenticationData.userHandle
+        if (userHandle != null && !userHandle.contentEquals(savedCredential.user.userHandle)) {
+            throw IllegalStateException("User Handle passt nicht zum gespeicherten Credential")
+        }
+
+        val coseKey = objectConverter.cborMapper.readValue(savedCredential.publicKeyCose, COSEKey::class.java)
+
+        val attestedCredentialData = AttestedCredentialData(
+            AAGUID(savedCredential.aaguid),
+            savedCredential.credentialId,
+            coseKey
+        )
+
+        val credentialRecord = CredentialRecordImpl(
+            null,                      // attestationStatement
+            true,                      // uvInitialized
+            savedCredential.backupEligible,
+            savedCredential.backupState,
+            savedCredential.signCount,
+            attestedCredentialData,
+            null, null, null, null
+        )
+
+        val serverProperty = ServerProperty.builder()
+            .origin(Origin(origin))
+            .rpId(rpId)
+            .challenge(challenge)
+            .build()
+
+        val parameters = AuthenticationParameters(
+            serverProperty,
+            credentialRecord,
+            null,      // allowCredentials: alle erlaubt
+            true       // userVerificationRequired
+        )
+
+        webAuthnManager.verify(authenticationData, parameters)
+
+        val authenticatorData = authenticationData.authenticatorData
+            ?: throw IllegalStateException("Authentifizierungsantwort enthält keine AuthenticatorData")
+
+        savedCredential.signCount = authenticatorData.signCount
+        savedCredential.backupState = authenticatorData.isFlagBS
+        savedCredential.lastUsedAt = Instant.now()
+        credentialRepository.save(savedCredential)
+
+        return savedCredential.user
+    }
+
+
 }
