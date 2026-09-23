@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<nav th:fragment="nav">
+    <a th:href="@{/}">Start</a>
+
+    <span sec:authorize="isAuthenticated()">
+        <a th:href="@{/passkeylist}">Meine Passkeys</a>
+        <span sec:authentication="name">Nutzer</span>
+        <form th:action="@{/logout}" method="post" style="display:inline">
+            <button type="submit">Abmelden</button>
+        </form>
+    </span>
+
+    <span sec:authorize="!isAuthenticated()">
+        <a th:href="@{/auth/login}">Anmelden</a>
+        <a th:href="@{/auth/register}">Konto anlegen</a>
+    </span>
+    <hr>
+</nav>
+</body>
+</html>

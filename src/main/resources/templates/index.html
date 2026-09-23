@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Passkey-Prototyp')}"></head>
+<body>
+<div th:replace="~{fragments/nav :: nav}"></div>
+<h1>Passkey-Prototyp</h1>
+<p>Anmeldung ausschließlich über Passkeys, ohne Passwort.</p>
+
+<a th:href="@{/auth/login}">
+    <button type="button">Anmelden</button>
+</a>
+<a th:href="@{/auth/register}">
+    <button type="button">Konto anlegen</button>
+</a>
+</body>
+</html>

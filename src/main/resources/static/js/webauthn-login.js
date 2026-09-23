@@ -10,7 +10,7 @@ document.getElementById('loginButton').addEventListener('click', async () => {
 
         await postJson('/auth/login/finish', JSON.stringify(credential.toJSON()));
 
-        status.textContent = 'Anmeldung erfolgreich.';
+        window.location.href = '/passkeylist';
     } catch (error) {
         status.textContent = 'Fehlgeschlagen: ' + error.message;
     }

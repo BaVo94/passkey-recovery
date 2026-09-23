@@ -24,6 +24,12 @@ class SecurityConfig {
             }
             formLogin { disable() }
             httpBasic { disable() }
+            logout {
+                logoutUrl = "/logout"
+                logoutSuccessUrl = "/"
+                invalidateHttpSession = true
+                clearAuthentication = true
+            }
         }
         return http.build()
     }

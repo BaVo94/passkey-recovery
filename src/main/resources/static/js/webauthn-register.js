@@ -15,7 +15,7 @@ document.getElementById('registerForm').addEventListener('submit', async (event)
 
         await postJson('/auth/register/finish', JSON.stringify(credential.toJSON()));
 
-        status.textContent = 'Registrierung erfolgreich.';
+        window.location.href = '/passkeylist';
     } catch (error) {
         status.textContent = 'Fehlgeschlagen: ' + error.message;
     }

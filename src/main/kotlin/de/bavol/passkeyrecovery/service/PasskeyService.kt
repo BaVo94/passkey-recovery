@@ -55,6 +55,15 @@ class PasskeyService(
         )
     )
 
+    private val knownAuthenticators = mapOf(
+        UUID.fromString("9ddd1817-af5a-4672-a2b9-3e3dd95000a9") to "Windows Hello",
+        UUID.fromString("ea9b8d66-4d01-1d21-3ce4-b6b48cb575d4") to "Google Password Manager",
+        UUID.fromString("fbfc3007-154e-4ecc-8c0b-6e020557d7bd") to "iCloud-Schlüsselbund"
+    )
+
+    fun authenticatorName(aaguid: UUID?): String =
+        knownAuthenticators[aaguid] ?: "Unbekannter Authenticator"
+
     fun startRegistration(user: User): PublicKeyCredentialCreationOptions {
         val challenge = DefaultChallenge()
 

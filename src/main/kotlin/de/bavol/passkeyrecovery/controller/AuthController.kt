@@ -2,16 +2,12 @@ package de.bavol.passkeyrecovery.controller
 
 import com.webauthn4j.converter.util.ObjectConverter
 import com.webauthn4j.data.client.challenge.Challenge
-import com.webauthn4j.verifier.exception.VerificationException
-import de.bavol.passkeyrecovery.exception.CredentialNotFoundException
-import de.bavol.passkeyrecovery.exception.UsernameTakenException
 import de.bavol.passkeyrecovery.model.User
 import de.bavol.passkeyrecovery.service.PasskeyService
 import de.bavol.passkeyrecovery.service.UserService
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.servlet.http.HttpSession
-import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -20,12 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository
 import org.springframework.security.web.context.SecurityContextRepository
 import org.springframework.stereotype.Controller
-import org.springframework.web.bind.annotation.ExceptionHandler
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.ResponseBody
+import org.springframework.web.bind.annotation.*
 
 @Controller
 @RequestMapping("/auth")
@@ -35,18 +26,6 @@ class AuthController(
     private val objectConverter: ObjectConverter,
 ) {
     private val securityContextRepository: SecurityContextRepository = HttpSessionSecurityContextRepository()
-
-    @ExceptionHandler(UsernameTakenException::class)
-    fun handleUsernameTaken(e: UsernameTakenException) =
-        ResponseEntity.status(HttpStatus.CONFLICT).body(e.message)
-
-    @ExceptionHandler(VerificationException::class)
-    fun handleVerificationFailure(e: VerificationException) =
-        ResponseEntity.badRequest().body("Verifikation fehlgeschlagen.")
-
-    @ExceptionHandler(CredentialNotFoundException::class)
-    fun handleCredentialNotFoundException(e: CredentialNotFoundException) =
-        ResponseEntity.badRequest().body("Verifikation fehlgeschlagen.")
 
     @GetMapping("/register")
     fun registerPage(): String = "register"
@@ -81,7 +60,9 @@ class AuthController(
     @ResponseBody
     fun finishRegistration(
         @RequestBody responseJson: String,
-        session: HttpSession
+        session: HttpSession,
+        request: HttpServletRequest,
+        response: HttpServletResponse
     ): ResponseEntity<Void> {
         val challenge = session.getAttribute(CHALLENGE_ATTRIBUTE) as? Challenge
             ?: return ResponseEntity.badRequest().build()
@@ -93,6 +74,8 @@ class AuthController(
         passkeyService.storeCredential(user, registrationData)
         session.removeAttribute(CHALLENGE_ATTRIBUTE)
         session.removeAttribute(PENDING_REGISTRATION_ATTRIBUTE)
+
+        authenticate(user, request, response)
 
         return ResponseEntity.ok().build()
     }

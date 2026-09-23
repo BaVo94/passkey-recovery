@@ -1,30 +1,45 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Passkeylist</title>
-</head>
+<head th:replace="~{fragments/head :: head('Meine Passkeys')}"></head>
 <body>
+<div th:replace="~{fragments/nav :: nav}"></div>
 <h1>Liste ihrer Passkeys:</h1>
 <table>
+    <thead>
+    <tr>
+        <th>Authenticator</th>
+        <th>Erstellt</th>
+        <th>Zuletzt genutzt</th>
+        <th>Typ</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
     <tr th:each="cred : ${credentials}">
-        <td th:text="${cred.aaguid}">Modell</td>
-        <td th:text="${#temporals.format(cred.createdAt, 'dd.MM.yyyy')}">Erstellt</td>
-        <td th:text="${cred.lastUsedAt}">Zuletzt genutzt</td>
-        <td th:text="${cred.backupEligible} ? 'synchronisiert' : 'gerätegebunden'"></td>
+        <td th:text="${cred.authenticatorName}">Authenticator</td>
+        <td th:text="${#temporals.format(cred.createdAt, 'dd.MM.yyyy HH:mm')}">Erstellt</td>
+        <td th:text="${cred.lastUsedAt != null} ? ${#temporals.format(cred.lastUsedAt, 'dd.MM.yyyy HH:mm')} : 'noch nicht genutzt'">
+            Zuletzt genutzt
+        </td>
+        <td th:text="${cred.backupStatus}">Typ</td>
         <td>
-            <form th:action="@{/passkeys/{id}/revoke(id=${cred.id})}" method="post">
-        <span th:title="${credentials.size() > 1} ? '' : 'Der letzte Passkey kann nicht widerrufen werden.'">
-            <button type="submit" th:disabled="${credentials.size() <= 1}">Widerrufen</button>
-        </span>
+            <form th:action="@{/passkeylist/{id}/revoke(id=${cred.id})}" method="post">
+                    <span th:title="${credentials.size() > 1} ? '' : 'Der letzte Passkey kann nicht widerrufen werden.'">
+                        <button type="submit" th:disabled="${credentials.size() <= 1}">Widerrufen</button>
+                    </span>
             </form>
         </td>
     </tr>
+    </tbody>
 </table>
 
 <button id="addPasskeyButton">Weiteren Passkey hinzufügen</button>
+<p id="status"></p>
 <p th:if="${credentials.size() == 1}">
     Sie haben nur einen Passkey. Richten Sie einen zweiten ein, um den Zugang bei Geräteverlust nicht zu verlieren.
 </p>
+
+<script src="/js/webauthn-common.js"></script>
+<script src="/js/webauthn-add.js"></script>
 </body>
 </html>

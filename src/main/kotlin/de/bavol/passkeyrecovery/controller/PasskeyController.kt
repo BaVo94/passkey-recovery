@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseBody
 import java.security.Principal
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
 import java.util.UUID
 
 @Controller
@@ -28,8 +31,19 @@ class PasskeyController(
     @GetMapping
     fun overview(principal: Principal, model: Model): String {
         val user = userService.getByUsername(principal.name)
-        model.addAttribute("user", user)
-        model.addAttribute("credentials", passkeyService.listCredentials(user))
+
+        val views = passkeyService.listCredentials(user).map { cred ->
+            CredentialView(
+                id = cred.id!!,
+                authenticatorName = passkeyService.authenticatorName(cred.aaguid),
+                createdAt = toLocal(cred.createdAt),
+                lastUsedAt = cred.lastUsedAt?.let { toLocal(it) },
+                backupStatus = calculateBackupStatus(cred.backupEligible, cred.backupState)
+            )
+        }
+
+        model.addAttribute("credentials", views)
+
         return "passkeylist"
     }
 
@@ -67,4 +81,21 @@ class PasskeyController(
         return ResponseEntity.ok().build()
     }
 
+    private fun toLocal(instant: Instant): LocalDateTime =
+        LocalDateTime.ofInstant(instant, ZoneId.systemDefault())
+
+    private fun calculateBackupStatus(backupEligible: Boolean, backupState: Boolean): String = when {
+        !backupEligible -> "gerätegebunden"
+        backupState -> "gesichert"
+        else -> "synchronisierbar"
+    }
+
 }
+
+data class CredentialView(
+    val id: UUID,
+    val authenticatorName: String,
+    val createdAt: LocalDateTime,
+    val lastUsedAt: LocalDateTime?,
+    val backupStatus: String
+)
