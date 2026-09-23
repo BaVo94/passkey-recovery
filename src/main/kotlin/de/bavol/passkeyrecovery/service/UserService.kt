@@ -44,4 +44,8 @@ class UserService(private val userRepository: UserRepository) {
         return userRepository.findById(id)
             .orElseThrow { UserNotFoundException(id) }
     }
+
+    fun getByUsername(username: String): User {
+        return userRepository.findByUsername(username) ?: throw UserNotFoundException(username)
+    }
 }

@@ -25,12 +25,14 @@ import com.webauthn4j.data.client.Origin
 import com.webauthn4j.data.client.challenge.Challenge
 import com.webauthn4j.data.client.challenge.DefaultChallenge
 import com.webauthn4j.server.ServerProperty
+import de.bavol.passkeyrecovery.exception.LastCredentialException
 import de.bavol.passkeyrecovery.model.PasskeyCredential
 import de.bavol.passkeyrecovery.model.User
 import de.bavol.passkeyrecovery.repository.PasskeyCredentialRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.time.Instant
+import java.util.UUID
 import javax.security.auth.login.CredentialNotFoundException
 
 @Service
@@ -212,5 +214,21 @@ class PasskeyService(
         return savedCredential.user
     }
 
+    fun listCredentials(user: User): List<PasskeyCredential> =
+        credentialRepository.findAllByUser(user)
+
+    fun revokeCredential(user: User, credentialId: UUID) {
+        val credential = credentialRepository.findById(credentialId)
+            .orElseThrow { CredentialNotFoundException() }
+
+        if (credential.user.id != user.id) {
+            throw CredentialNotFoundException()
+        }
+        if (credentialRepository.countByUser(user) <= 1) {
+            throw LastCredentialException()
+        }
+
+        credentialRepository.delete(credential)
+    }
 
 }

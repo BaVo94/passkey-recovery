@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Passkeylist</title>
+</head>
+<body>
+<h1>Liste ihrer Passkeys:</h1>
+<table>
+    <tr th:each="cred : ${credentials}">
+        <td th:text="${cred.aaguid}">Modell</td>
+        <td th:text="${#temporals.format(cred.createdAt, 'dd.MM.yyyy')}">Erstellt</td>
+        <td th:text="${cred.lastUsedAt}">Zuletzt genutzt</td>
+        <td th:text="${cred.backupEligible} ? 'synchronisiert' : 'gerätegebunden'"></td>
+        <td>
+            <form th:action="@{/passkeys/{id}/revoke(id=${cred.id})}" method="post">
+        <span th:title="${credentials.size() > 1} ? '' : 'Der letzte Passkey kann nicht widerrufen werden.'">
+            <button type="submit" th:disabled="${credentials.size() <= 1}">Widerrufen</button>
+        </span>
+            </form>
+        </td>
+    </tr>
+</table>
+
+<button id="addPasskeyButton">Weiteren Passkey hinzufügen</button>
+<p th:if="${credentials.size() == 1}">
+    Sie haben nur einen Passkey. Richten Sie einen zweiten ein, um den Zugang bei Geräteverlust nicht zu verlieren.
+</p>
+</body>
+</html>
