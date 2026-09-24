@@ -20,6 +20,7 @@ class SecurityConfig {
                 authorize("/auth/**", permitAll)
                 authorize("/css/**", permitAll)
                 authorize("/js/**", permitAll)
+                authorize("/admin/**", hasRole("ADMIN"))
                 authorize(anyRequest, authenticated)
             }
             formLogin { disable() }

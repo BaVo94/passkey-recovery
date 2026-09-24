@@ -114,7 +114,7 @@ class AuthController(
         val authentication = UsernamePasswordAuthenticationToken.authenticated(
             user.username,
             null,
-            listOf(SimpleGrantedAuthority("ROLE_USER"))
+            listOf(SimpleGrantedAuthority("ROLE_${user.role.name}"))
         )
 
         request.changeSessionId()
