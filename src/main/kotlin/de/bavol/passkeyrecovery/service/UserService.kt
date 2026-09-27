@@ -4,6 +4,7 @@ import de.bavol.passkeyrecovery.exception.UserNotFoundException
 import de.bavol.passkeyrecovery.exception.UsernameTakenException
 import de.bavol.passkeyrecovery.model.User
 import de.bavol.passkeyrecovery.repository.PasskeyCredentialRepository
+import de.bavol.passkeyrecovery.repository.RecoveryRequestRepository
 import de.bavol.passkeyrecovery.repository.UserRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -13,7 +14,8 @@ import java.util.UUID
 @Service
 class UserService(
     private val userRepository: UserRepository,
-    private val credentialRepository: PasskeyCredentialRepository
+    private val credentialRepository: PasskeyCredentialRepository,
+    private val recoveryRequestRepository: RecoveryRequestRepository
 ) {
     private val secureRandom = SecureRandom()
 
@@ -57,6 +59,7 @@ class UserService(
     @Transactional
     fun deleteUser(user: User) {
         credentialRepository.deleteAll(credentialRepository.findAllByUser(user))
+        recoveryRequestRepository.deleteAll(recoveryRequestRepository.findAllByUser(user))
         userRepository.delete(user)
     }
 }

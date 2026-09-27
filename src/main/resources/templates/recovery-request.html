@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Zugang wiederherstellen')}"></head>
+<body>
+<div th:replace="~{fragments/nav :: nav}"></div>
+
+<h1>Zugang wiederherstellen</h1>
+
+<p>
+    Wenn Sie keinen Zugriff mehr auf einen Ihrer registrierten Passkeys haben, können Sie
+    eine Wiederherstellung Ihres Kontos beantragen. Ihre Identität wird anschließend durch
+    die Administration geprüft.
+</p>
+
+<form th:action="@{/recovery/request}" method="post">
+    <label>
+        Kontoname
+        <input type="text" name="username" required autocomplete="username">
+    </label>
+    <button type="submit">Wiederherstellung beantragen</button>
+</form>
+
+<p>
+    Sie haben bereits einen Freischaltcode erhalten?
+    <a th:href="@{/recovery/redeem}">Code einlösen</a>
+</p>
+
+</body>
+</html>

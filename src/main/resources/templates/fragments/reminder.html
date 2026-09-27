@@ -1,12 +1,21 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
-<div th:fragment="reminder" th:if="${passkeyCount == 1}" class="reminder">
-    <p>
-        Sie haben nur einen Passkey registriert. Geht das Gerät verloren, ist Ihr Konto
-        nur noch über die Kontowiederherstellung erreichbar.
-        <a th:href="@{/passkeylist}">Jetzt einen zweiten Passkey einrichten</a>
-    </p>
+<div th:fragment="reminder">
+    <div th:if="${passkeyCount == 0}" class="reminder">
+        <p>
+            Sie haben keinen Passkey registriert. Sollte diese Sitzung auslaufen, verlieren Sie
+            den Zugang zu Ihrem Konto. Bitte richten Sie umgehend einen Passkey ein.
+            <a th:href="@{/passkeylist}">Jetzt einen Passkey einrichten</a>
+        </p>
+    </div>
+    <div th:if="${passkeyCount == 1}" class="reminder">
+        <p>
+            Sie haben nur einen Passkey registriert. Geht das Gerät verloren, ist Ihr Konto
+            nur noch über die Kontowiederherstellung erreichbar.
+            <a th:href="@{/passkeylist}">Jetzt einen zweiten Passkey einrichten</a>
+        </p>
+    </div>
 </div>
 </body>
 </html>

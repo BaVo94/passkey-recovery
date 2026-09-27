@@ -240,4 +240,9 @@ class PasskeyService(
         credentialRepository.delete(credential)
     }
 
+    fun revokeAllCredentialsForUser(user: User) {
+        for (credential in credentialRepository.findAllByUser(user))
+            credentialRepository.delete(credential)
+    }
+
 }

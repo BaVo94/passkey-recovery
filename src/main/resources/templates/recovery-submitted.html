@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Anfrage übermittelt')}"></head>
+<body>
+<div th:replace="~{fragments/nav :: nav}"></div>
+
+<h1>Anfrage übermittelt</h1>
+
+<p>
+    Falls ein Konto mit dem angegebenen Namen existiert, wurde eine Wiederherstellungsanfrage
+    an die Administration übermittelt.
+</p>
+
+<p>
+    Wenden Sie sich zur Prüfung Ihrer Identität an Ihre Administration. Nach erfolgreicher
+    Prüfung erhalten Sie einen Freischaltcode, mit dem Sie wieder Zugang zu Ihrem Konto
+    erhalten und einen neuen Passkey einrichten können.
+</p>
+
+<p>
+    <a th:href="@{/recovery/redeem}">Freischaltcode einlösen</a>
+</p>
+
+</body>
+</html>

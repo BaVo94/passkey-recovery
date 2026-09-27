@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Admin')}"></head>
+<body>
+<div th:replace="~{fragments/nav :: nav}"></div>
+<div th:replace="~{fragments/reminder :: reminder}"></div>
+
+<h1>Ausstehende Wiederherstellungsanfragen:</h1>
+
+<div th:if="${generatedCode != null}" class="reminder">
+    <p>Freischaltcode für den Nutzer: <strong th:text="${generatedCode}">CODE</strong></p>
+    <p>Notieren Sie den Code jetzt. Er wird nur einmal angezeigt.</p>
+</div>
+
+<table>
+    <thead>
+    <tr>
+        <th>Nutzername</th>
+        <th>Anzeigename</th>
+        <th>Angefragt am</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="req : ${requests}">
+        <td th:text="${req.userName}"></td>
+        <td th:text="${req.displayName}"></td>
+        <td th:text="${#temporals.format(req.createdAt, 'dd.MM.yyyy HH:mm')}"></td>
+        <td>
+            <form th:action="@{/admin/approve}" method="post" style="display:inline">
+                <input type="hidden" name="requestId" th:value="${req.id}">
+                <button type="submit">Freischalten</button>
+            </form>
+            <form th:action="@{/admin/reject}" method="post" style="display:inline">
+                <input type="hidden" name="requestId" th:value="${req.id}">
+                <button type="submit">Ablehnen</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

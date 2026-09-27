@@ -2,8 +2,12 @@ package de.bavol.passkeyrecovery.controller
 
 import com.webauthn4j.verifier.exception.VerificationException
 import de.bavol.passkeyrecovery.exception.CredentialNotFoundException
+import de.bavol.passkeyrecovery.exception.InvalidDeviceCodeException
+import de.bavol.passkeyrecovery.exception.InvalidRecoveryCodeException
+import de.bavol.passkeyrecovery.exception.InvalidRecoveryRequestStateException
 import de.bavol.passkeyrecovery.exception.LastCredentialException
 import de.bavol.passkeyrecovery.exception.PasskeyRecoveryException
+import de.bavol.passkeyrecovery.exception.RecoveryRequestNotFoundException
 import de.bavol.passkeyrecovery.exception.UserNotFoundException
 import de.bavol.passkeyrecovery.exception.UsernameTakenException
 import org.slf4j.LoggerFactory
@@ -30,6 +34,19 @@ class ExceptionHandlers {
 
             is CredentialNotFoundException, is UserNotFoundException ->
                 ResponseEntity.badRequest().body("Verifikation fehlgeschlagen.")
+
+            is RecoveryRequestNotFoundException ->
+                ResponseEntity.badRequest().body(e.message)
+
+            is InvalidDeviceCodeException ->
+                ResponseEntity.badRequest().body("Der eingegebene Code ist ungültig.")
+
+            is InvalidRecoveryCodeException ->
+                ResponseEntity.badRequest().body("Der eingegebene Code ist ungültig.")
+
+            is InvalidRecoveryRequestStateException ->
+                ResponseEntity.badRequest().body(e.message)
+
         }
     }
 

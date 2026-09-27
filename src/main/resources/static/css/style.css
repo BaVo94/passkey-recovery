@@ -18,3 +18,8 @@ th {
     padding: 0.6rem 1rem;
     margin-bottom: 1rem;
 }
+
+.error {
+    color: #a00000;
+    font-weight: bold;
+}

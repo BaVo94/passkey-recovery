@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Freischaltcode einlösen')}"></head>
+<body>
+<div th:replace="~{fragments/nav :: nav}"></div>
+
+<h1>Freischaltcode einlösen</h1>
+
+<p th:if="${error != null}" class="error" th:text="${error}">Fehlermeldung</p>
+
+<p>
+    Geben Sie den Freischaltcode ein, den Sie nach der Identitätsprüfung von Ihrer
+    Administration erhalten haben. Anschließend werden Sie angemeldet und richten
+    einen neuen Passkey ein.
+</p>
+
+<form th:action="@{/recovery/redeem}" method="post">
+    <label>
+        Freischaltcode
+        <input type="text" name="code" required autocomplete="off" placeholder="XXXX-XXXX-XXXX">
+    </label>
+    <button type="submit">Code einlösen</button>
+</form>
+
+</body>
+</html>

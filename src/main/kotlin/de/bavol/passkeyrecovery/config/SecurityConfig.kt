@@ -17,6 +17,7 @@ class SecurityConfig {
             authorizeHttpRequests {
                 authorize("/", permitAll)
                 authorize("/error", permitAll)
+                authorize("/recovery/**", permitAll)
                 authorize("/auth/**", permitAll)
                 authorize("/css/**", permitAll)
                 authorize("/js/**", permitAll)
