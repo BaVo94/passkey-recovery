@@ -21,8 +21,10 @@ class SecurityConfig {
                 authorize("/auth/**", permitAll)
                 authorize("/css/**", permitAll)
                 authorize("/js/**", permitAll)
-                authorize("/admin/**", hasRole("ADMIN"))
+                authorize("/devicelogin/**", permitAll)
+                authorize("/approve-device/**", authenticated)
                 authorize(anyRequest, authenticated)
+                authorize("/admin/**", hasRole("ADMIN"))
             }
             formLogin { disable() }
             httpBasic { disable() }

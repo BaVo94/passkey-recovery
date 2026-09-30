@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Anmeldung auf neuem Gerät')}"></head>
+<body>
+<div th:replace="~{fragments/nav :: nav}"></div>
+
+<h1>Anmeldung auf einem neuen Gerät</h1>
+
+<p>
+    Auf diesem Gerät ist noch kein Passkey hinterlegt. Sie können sich dennoch anmelden,
+    indem Sie die Anmeldung auf einem Gerät bestätigen, auf dem Sie bereits angemeldet sind.
+</p>
+
+<p>
+    Geben Sie dazu Ihren Kontonamen ein. Anschließend erhalten Sie einen kurzen Code,
+    den Sie auf dem bereits angemeldeten Gerät eingeben.
+</p>
+
+<form th:action="@{/devicelogin/start}" method="post">
+    <label>
+        Kontoname
+        <input type="text" name="username" required autocomplete="username">
+    </label>
+    <button type="submit">Code anfordern</button>
+</form>
+
+</body>
+</html>

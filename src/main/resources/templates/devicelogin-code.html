@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Anmeldung bestätigen')}"></head>
+<body>
+<div th:replace="~{fragments/nav :: nav}"></div>
+
+<h1>Anmeldung bestätigen</h1>
+
+<p>
+    Öffnen Sie auf einem Gerät, auf dem Sie bereits angemeldet sind, den Bereich
+    <strong>Anmeldungsbestätigung</strong> und geben Sie dort diesen Code ein:
+</p>
+
+<p class="devicecode" th:text="${code}">XXXXXX</p>
+
+<p>
+    Der Code ist nur kurze Zeit gültig. Sobald Sie die Anmeldung auf dem anderen Gerät
+    bestätigt haben, werden Sie hier automatisch angemeldet.
+</p>
+
+<p id="status">Warte auf Bestätigung …</p>
+
+<script src="/js/webauthn-common.js"></script>
+<script src="/js/devicelogin.js"></script>
+</body>
+</html>

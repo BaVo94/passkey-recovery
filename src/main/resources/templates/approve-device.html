@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Anmeldung eines Geräts bestätigen')}"></head>
+<body>
+<div th:replace="~{fragments/nav :: nav}"></div>
+
+<h1>Anmeldungsbestätigung</h1>
+
+<p th:if="${error != null}" class="error" th:text="${error}">Fehlermeldung</p>
+
+<p>
+    Wenn Sie sich auf einem Gerät anmelden möchten, auf dem noch kein Passkey hinterlegt ist,
+    wird Ihnen dort ein Code angezeigt. Geben Sie diesen Code hier ein, um die Anmeldung
+    freizugeben.
+</p>
+
+<p>
+    Geben Sie niemals einen Code ein, der Ihnen von einer anderen Person genannt wurde.
+    Ein solcher Code gibt dieser Person Zugriff auf Ihr Konto.
+</p>
+
+<form th:action="@{/approve-device}" method="post">
+    <label>
+        Code vom anderen Gerät
+        <input type="text" name="code" required autocomplete="off" placeholder="XXXXXX">
+    </label>
+    <button type="submit">Weiter</button>
+</form>
+
+</body>
+</html>

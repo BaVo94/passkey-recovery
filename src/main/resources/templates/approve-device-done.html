@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Anmeldung freigegeben')}"></head>
+<body>
+<div th:replace="~{fragments/nav :: nav}"></div>
+
+<h1>Anmeldung freigegeben</h1>
+
+<p>
+    Die Anmeldung wurde freigegeben. Das andere Gerät wird in wenigen Sekunden automatisch
+    angemeldet. Sie sollten dort umgehend einen eigenen Passkey einrichten.
+</p>
+
+<p>
+    <a th:href="@{/passkeylist}">Zurück zu meinen Passkeys</a>
+</p>
+
+</body>
+</html>

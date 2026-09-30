@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Anmeldung freigeben')}"></head>
+<body>
+<div th:replace="~{fragments/nav :: nav}"></div>
+
+<h1>Anmeldung freigeben</h1>
+
+<div class="reminder">
+    <p>
+        Sie geben damit einem anderen Gerät vollständigen Zugriff auf Ihr Konto
+        <strong th:text="${username}">kontoname</strong>. Das Gerät kann anschließend
+        einen eigenen Passkey einrichten und sich dauerhaft anmelden.
+    </p>
+    <p>
+        Geben Sie die Anmeldung nur frei, wenn Sie den Vorgang selbst auf einem Ihrer
+        eigenen Geräte gestartet haben.
+    </p>
+</div>
+
+<p>
+    Anfrage gestellt am
+    <span th:text="${#temporals.format(requestedAt, 'dd.MM.yyyy HH:mm')}">Zeitpunkt</span>
+</p>
+
+<form th:action="@{/approve-device/confirm}" method="post" style="display:inline">
+    <input type="hidden" name="code" th:value="${code}">
+    <button type="submit">Anmeldung freigeben</button>
+</form>
+
+<a th:href="@{/approve-device}">
+    <button type="button">Abbrechen</button>
+</a>
+
+</body>
+</html>

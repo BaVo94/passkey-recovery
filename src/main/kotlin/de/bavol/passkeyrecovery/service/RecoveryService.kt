@@ -27,25 +27,12 @@ class RecoveryService(
     private val userService: UserService,
     private val recoveryRequestRepository: RecoveryRequestRepository,
     private val passkeyService: PasskeyService,
+    private val codeGenerator: CodeGenerator,
     @Value("\${app.recovery.code-validity:7d}") private val codeValidity: Duration
 ) {
     private val log = LoggerFactory.getLogger(javaClass)
-    private val secureRandom = SecureRandom()
-    private val alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
 
-    private fun generateCode(): String {
-        val chars: MutableList<Char?> = ArrayList<Char?>()
-        for (i in 1..12) {
-            chars.add(alphabet[secureRandom.nextInt(alphabet.length)])
-        }
-        return chars.joinToString("").chunked(4).joinToString("-")
-    }
-
-    private fun generateHashCode(code: String): String {
-        val digest = MessageDigest.getInstance("SHA-256")
-        val bytes = digest.digest(code.uppercase().toByteArray(StandardCharsets.UTF_8))
-        return bytes.joinToString("") { "%02x".format(it) }
-    }
+    private fun generateCode(): String = codeGenerator.generate(length = 12, groupSize = 4)
 
     fun createRequest(username: String) {
         try {
@@ -88,7 +75,7 @@ class RecoveryService(
 
         pendingRequest.processedAt = Instant.now()
         pendingRequest.codeExpiresAt = Instant.now().plus(codeValidity)
-        pendingRequest.codeHash = generateHashCode(normalize(code))
+        pendingRequest.codeHash = codeGenerator.hash(code)
         pendingRequest.status = RecoveryStatus.APPROVED
         recoveryRequestRepository.save(pendingRequest)
 
@@ -114,7 +101,7 @@ class RecoveryService(
 
     @Transactional
     fun redeemRequest(code: String): User {
-        val request = recoveryRequestRepository.findByCodeHash(generateHashCode(normalize(code)))
+        val request = recoveryRequestRepository.findByCodeHash(codeGenerator.hash(code))
             ?: throw RecoveryCodeUnknownException()
         val expiresAt = request.codeExpiresAt ?: throw RecoveryCodeUnknownException()
         if (Instant.now().isAfter(expiresAt)) throw RecoveryCodeExpiredException(request.id)
@@ -129,8 +116,4 @@ class RecoveryService(
         }
 
     }
-
-
-    private fun normalize(code: String): String =
-        code.uppercase().filter { it.isLetterOrDigit() }
 }
