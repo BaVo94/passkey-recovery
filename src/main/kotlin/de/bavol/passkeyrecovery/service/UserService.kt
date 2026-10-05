@@ -3,6 +3,7 @@ package de.bavol.passkeyrecovery.service
 import de.bavol.passkeyrecovery.exception.UserNotFoundException
 import de.bavol.passkeyrecovery.exception.UsernameTakenException
 import de.bavol.passkeyrecovery.model.User
+import de.bavol.passkeyrecovery.repository.DeviceLoginRequestRepository
 import de.bavol.passkeyrecovery.repository.PasskeyCredentialRepository
 import de.bavol.passkeyrecovery.repository.RecoveryRequestRepository
 import de.bavol.passkeyrecovery.repository.UserRepository
@@ -15,7 +16,8 @@ import java.util.UUID
 class UserService(
     private val userRepository: UserRepository,
     private val credentialRepository: PasskeyCredentialRepository,
-    private val recoveryRequestRepository: RecoveryRequestRepository
+    private val recoveryRequestRepository: RecoveryRequestRepository,
+    private val deviceLoginRequestRepository: DeviceLoginRequestRepository
 ) {
     private val secureRandom = SecureRandom()
 
@@ -60,6 +62,7 @@ class UserService(
     fun deleteUser(user: User) {
         credentialRepository.deleteAll(credentialRepository.findAllByUser(user))
         recoveryRequestRepository.deleteAll(recoveryRequestRepository.findAllByUser(user))
+        deviceLoginRequestRepository.deleteAll(deviceLoginRequestRepository.findAllByUser(user))
         userRepository.delete(user)
     }
 }
