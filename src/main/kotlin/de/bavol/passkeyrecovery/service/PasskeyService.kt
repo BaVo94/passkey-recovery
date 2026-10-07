@@ -56,9 +56,15 @@ class PasskeyService(
     )
 
     private val knownAuthenticators = mapOf(
+        UUID.fromString("08987058-cadc-4b81-b6e1-30de50dcbe96") to "Windows Hello",
         UUID.fromString("9ddd1817-af5a-4672-a2b9-3e3dd95000a9") to "Windows Hello",
+        UUID.fromString("6028b017-b1d4-4c02-b4b3-afcdafc96bb2") to "Windows Hello",
+        UUID.fromString("d3452668-01fd-4c12-926c-83a4204853aa") to "Microsoft Password Manager",
         UUID.fromString("ea9b8d66-4d01-1d21-3ce4-b6b48cb575d4") to "Google Password Manager",
-        UUID.fromString("fbfc3007-154e-4ecc-8c0b-6e020557d7bd") to "iCloud-Keychain"
+        UUID.fromString("fbfc3007-154e-4ecc-8c0b-6e020557d7bd") to "Apple Passwords",
+        UUID.fromString("dd4ec289-e01d-41c9-bb89-70fa845d4bf2") to "iCloud Keychain (Managed)",
+        UUID.fromString("d548826e-79b4-db40-a3d8-11116f7e8349") to "Bitwarden",
+        UUID.fromString("53414d53-554e-4700-0000-000000000000") to "Samsung Pass"
     )
 
     fun authenticatorName(aaguid: UUID?): String =
